@@ -39,8 +39,8 @@ import ca.uhn.fhir.rest.param.ParamPrefixEnum;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemStream;
@@ -48,7 +48,7 @@ import org.springframework.batch.item.ItemStreamException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -90,15 +90,14 @@ public abstract class BaseReverseCronologicalBatchPidReader implements ItemReade
 
 	@Nonnull
 	public static JobParameters buildJobParameters(String theOperationName, Integer theBatchSize, RequestListJson theRequestListJson) {
-		Map<String, JobParameter> map = new HashMap<>();
-		map.put(MultiUrlJobParameterValidator.JOB_PARAM_OPERATION_NAME, new JobParameter(theOperationName));
-		map.put(BatchConstants.JOB_PARAM_REQUEST_LIST, new JobParameter(theRequestListJson.toJson()));
-		map.put(BatchConstants.JOB_PARAM_START_TIME, new JobParameter(DateUtils.addMinutes(new Date(), CommonBatchJobConfig.MINUTES_IN_FUTURE_TO_PROCESS_FROM)));
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addString(MultiUrlJobParameterValidator.JOB_PARAM_OPERATION_NAME, theOperationName);
+		builder.addString(BatchConstants.JOB_PARAM_REQUEST_LIST, theRequestListJson.toJson());
+		builder.addDate(BatchConstants.JOB_PARAM_START_TIME, DateUtils.addMinutes(new Date(), CommonBatchJobConfig.MINUTES_IN_FUTURE_TO_PROCESS_FROM));
 		if (theBatchSize != null) {
-			map.put(BatchConstants.JOB_PARAM_BATCH_SIZE, new JobParameter(theBatchSize.longValue()));
+			builder.addLong(BatchConstants.JOB_PARAM_BATCH_SIZE, theBatchSize.longValue());
 		}
-		JobParameters parameters = new JobParameters(map);
-		return parameters;
+		return builder.toJobParameters();
 	}
 
 	@Autowired

@@ -21,10 +21,10 @@ package ca.uhn.fhir.rest.server.mail;
  */
 
 import org.simplejavamail.api.email.Email;
-import org.simplejavamail.api.mailer.AsyncResponse;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface IMailSvc {
 	void sendMail(@Nonnull List<Email> theEmails);
@@ -33,6 +33,6 @@ public interface IMailSvc {
 
 	void sendMail(@Nonnull Email theEmail,
 					  @Nonnull Runnable theOnSuccess,
-					  @Nonnull AsyncResponse.ExceptionConsumer theErrorHandler);
+					  @Nonnull Consumer<Exception> theErrorHandler);
 
 }

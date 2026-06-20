@@ -98,7 +98,7 @@ public class FhirTesterConfig {
 		return retVal;
 	}
 	
-	@Bean(autowire=Autowire.BY_TYPE)
+	@Bean
 	public SubscriptionPlaygroundController subscriptionPlaygroundController() {
 		return new SubscriptionPlaygroundController();
 	}

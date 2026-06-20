@@ -29,8 +29,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemStream;
@@ -91,14 +91,13 @@ public class CronologicalBatchAllResourcePidReader implements ItemReader<List<Lo
 	}
 
 	public static JobParameters buildJobParameters(Integer theBatchSize, RequestPartitionId theRequestPartitionId) {
-		Map<String, JobParameter> map = new HashMap<>();
-		map.put(CronologicalBatchAllResourcePidReader.JOB_PARAM_REQUEST_PARTITION, new JobParameter(theRequestPartitionId.toJson()));
-		map.put(CronologicalBatchAllResourcePidReader.JOB_PARAM_START_TIME, new JobParameter(DateUtils.addMinutes(new Date(), CommonBatchJobConfig.MINUTES_IN_FUTURE_TO_PROCESS_FROM)));
+		JobParametersBuilder builder = new JobParametersBuilder();
+		builder.addString(CronologicalBatchAllResourcePidReader.JOB_PARAM_REQUEST_PARTITION, theRequestPartitionId.toJson());
+		builder.addDate(CronologicalBatchAllResourcePidReader.JOB_PARAM_START_TIME, DateUtils.addMinutes(new Date(), CommonBatchJobConfig.MINUTES_IN_FUTURE_TO_PROCESS_FROM));
 		if (theBatchSize != null) {
-			map.put(CronologicalBatchAllResourcePidReader.JOB_PARAM_BATCH_SIZE, new JobParameter(theBatchSize.longValue()));
+			builder.addLong(CronologicalBatchAllResourcePidReader.JOB_PARAM_BATCH_SIZE, theBatchSize.longValue());
 		}
-		JobParameters parameters = new JobParameters(map);
-		return parameters;
+		return builder.toJobParameters();
 	}
 
 	@Override

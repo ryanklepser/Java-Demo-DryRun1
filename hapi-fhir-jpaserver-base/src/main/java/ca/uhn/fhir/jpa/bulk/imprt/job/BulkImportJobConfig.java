@@ -50,8 +50,6 @@ import org.springframework.retry.policy.CompositeRetryPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.policy.TimeoutRetryPolicy;
 
-import javax.batch.api.chunk.listener.RetryProcessListener;
-
 import static ca.uhn.fhir.jpa.batch.config.BatchConstants.BULK_IMPORT_JOB_NAME;
 import static ca.uhn.fhir.jpa.batch.config.BatchConstants.BULK_IMPORT_PROCESSING_STEP;
 
@@ -193,12 +191,7 @@ public class BulkImportJobConfig {
 		return new BulkImportStepListener();
 	}
 
-	public static class ChunkAroundListener implements RetryProcessListener {
-
-		@Override
-		public void onRetryProcessException(Object item, Exception ex) throws Exception {
-			throw ex;
-		}
+	public static class ChunkAroundListener implements org.springframework.retry.RetryListener {
 	}
 
 }
