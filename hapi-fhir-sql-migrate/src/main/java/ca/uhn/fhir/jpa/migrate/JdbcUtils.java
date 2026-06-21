@@ -353,6 +353,17 @@ public class JdbcUtils {
 							ourLog.debug("Unable to query INFORMATION_SCHEMA.SEQUENCES: {}", e.getMessage());
 						}
 					}
+					if (sequenceNames.isEmpty()) {
+						try {
+							try (ResultSet rs = connection.createStatement().executeQuery("SELECT SEQUENCE_NAME FROM ALL_SEQUENCES")) {
+								while (rs.next()) {
+									sequenceNames.add(rs.getString("SEQUENCE_NAME"));
+								}
+							}
+						} catch (SQLException e) {
+							ourLog.debug("Unable to query ALL_SEQUENCES: {}", e.getMessage());
+						}
+					}
 					return sequenceNames;
 				} catch (SQLException e) {
 					throw new InternalErrorException(Msg.code(39) + e);
