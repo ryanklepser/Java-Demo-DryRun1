@@ -29,6 +29,8 @@ import org.springframework.batch.core.repository.support.JobRepositoryFactoryBea
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -64,11 +66,18 @@ public class NonPersistedBatchConfigurer {
 	protected JobRepository createJobRepository() throws Exception {
 		JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
 		factory.setTransactionManager(getTransactionManager());
-		if (myDataSource != null) {
-			factory.setDataSource(myDataSource);
-		}
+		factory.setDataSource(getOrCreateDataSource());
 		factory.afterPropertiesSet();
 		return factory.getObject();
+	}
+
+	private DataSource getOrCreateDataSource() {
+		if (myDataSource == null) {
+			myDataSource = new EmbeddedDatabaseBuilder()
+				.setType(EmbeddedDatabaseType.H2)
+				.build();
+		}
+		return myDataSource;
 	}
 
 	public JobExplorer getJobExplorer() throws Exception {
@@ -80,9 +89,7 @@ public class NonPersistedBatchConfigurer {
 
 	public JobExplorer createJobExplorer() throws Exception {
 		JobExplorerFactoryBean jobExplorerFactoryBean = new JobExplorerFactoryBean();
-		if (myDataSource != null) {
-			jobExplorerFactoryBean.setDataSource(myDataSource);
-		}
+		jobExplorerFactoryBean.setDataSource(getOrCreateDataSource());
 		jobExplorerFactoryBean.setTransactionManager(getTransactionManager());
 		jobExplorerFactoryBean.afterPropertiesSet();
 		return jobExplorerFactoryBean.getObject();

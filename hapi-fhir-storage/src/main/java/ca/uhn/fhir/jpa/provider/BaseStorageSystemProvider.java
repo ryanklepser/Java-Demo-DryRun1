@@ -58,7 +58,6 @@ public class BaseStorageSystemProvider<T, MT> extends BaseJpaProvider {
 		return myDao;
 	}
 
-	@Autowired
 	public void setDao(IFhirSystemDao<T, MT> theDao) {
 		myDao = theDao;
 	}

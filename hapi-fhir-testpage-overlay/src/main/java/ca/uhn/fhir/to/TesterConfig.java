@@ -90,7 +90,6 @@ public class TesterConfig {
 		myRefuseToFetchThirdPartyUrls = theRefuseToFetchThirdPartyUrls;
 	}
 
-	@Autowired
 	public void setServers(List<String> theServers) {
 		List<String> servers = theServers;
 

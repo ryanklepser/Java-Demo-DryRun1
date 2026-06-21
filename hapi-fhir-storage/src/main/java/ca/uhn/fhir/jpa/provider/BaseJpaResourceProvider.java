@@ -101,7 +101,6 @@ public abstract class BaseJpaResourceProvider<T extends IBaseResource> extends B
 		return myDao;
 	}
 
-	@Autowired
 	public void setDao(IFhirResourceDao<T> theDao) {
 		myDao = theDao;
 	}
