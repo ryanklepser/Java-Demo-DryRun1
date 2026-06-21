@@ -19,6 +19,7 @@ import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hibernate.search.engine.search.predicate.dsl.PredicateFinalStep;
 import org.hibernate.search.engine.search.predicate.dsl.SearchPredicateFactory;
 import org.hibernate.search.engine.search.query.SearchQuery;
+import org.hibernate.Session;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.common.EntityReference;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -252,7 +253,7 @@ public class ReindexTerminologyFreetextR4Test extends BaseJpaR4Test {
 
 	private long searchAllIndexedTermConceptCount(long theCodeSystemVersionId) {
 		return runInTransaction(() -> {
-			SearchSession searchSession = Search.session(myEntityManager);
+			SearchSession searchSession = Search.session(myEntityManager.unwrap(Session.class));
 			SearchPredicateFactory predicate = searchSession.scope(TermConcept.class).predicate();
 			PredicateFinalStep step = predicate.bool(b ->
 				b.must(predicate.match().field("myCodeSystemVersionPid").matching(theCodeSystemVersionId)));

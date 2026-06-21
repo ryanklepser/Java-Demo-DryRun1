@@ -32,6 +32,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.hibernate.search.engine.search.predicate.dsl.PredicateFinalStep;
 import org.hibernate.search.engine.search.predicate.dsl.SearchPredicateFactory;
 import org.hibernate.search.engine.search.query.SearchQuery;
+import org.hibernate.Session;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.common.EntityReference;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -1761,7 +1762,7 @@ public abstract class AbstractValueSetFreeTextExpansionR4Test extends BaseJpaTes
 				TermCodeSystemVersion termCsVersion = myTermCodeSystemVersionDao.findCurrentVersionForCodeSystemResourcePid(termCsId);
 				Long termCsvPid = termCsVersion.getPid();
 
-				SearchSession searchSession = Search.session(myEntityManager);
+				SearchSession searchSession = Search.session(myEntityManager.unwrap(Session.class));
 				SearchPredicateFactory predicate = searchSession.scope(TermConcept.class).predicate();
 
 				Optional<PredicateFinalStep> lastStepOpt = ReflectionTestUtils.invokeMethod(

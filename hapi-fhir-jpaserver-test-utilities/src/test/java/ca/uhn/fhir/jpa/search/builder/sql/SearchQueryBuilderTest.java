@@ -7,12 +7,12 @@ import ca.uhn.fhir.jpa.model.config.PartitionSettings;
 import ca.uhn.fhir.jpa.model.entity.ModelConfig;
 import ca.uhn.fhir.jpa.search.builder.predicate.ResourceTablePredicateBuilder;
 import com.google.common.collect.Lists;
-import org.hibernate.dialect.DerbyTenSevenDialect;
+import org.hibernate.dialect.DerbyDialect;
 import org.hibernate.dialect.MariaDB103Dialect;
 import org.hibernate.dialect.MySQL8Dialect;
 import org.hibernate.dialect.Oracle12cDialect;
-import org.hibernate.dialect.PostgreSQL95Dialect;
-import org.hibernate.dialect.SQLServer2005Dialect;
+import org.hibernate.dialect.PostgreSQLDialect;
+import org.hibernate.dialect.SQLServer2008Dialect;
 import org.hibernate.dialect.SQLServer2012Dialect;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +54,7 @@ public class SearchQueryBuilderTest {
 	public void testRangeSqlServer2005_NoSort() {
 
 		HibernatePropertiesProvider dialectProvider = new HibernatePropertiesProvider();
-		dialectProvider.setDialectForUnitTest(new SQLServer2005Dialect());
+		dialectProvider.setDialectForUnitTest(new SQLServer2008Dialect());
 		SearchQueryBuilder builder = new SearchQueryBuilder(myFhirContext, myModelConfig, myPartitionSettings, myRequestPartitionId, "Patient", mySqlBuilderFactory, dialectProvider, false);
 		builder.addResourceIdsPredicate(Lists.newArrayList(500L, 501L));
 		GeneratedSql generated;
@@ -80,7 +80,7 @@ public class SearchQueryBuilderTest {
 	public void testRangeSqlServer2005_WithSort() {
 
 		HibernatePropertiesProvider dialectProvider = new HibernatePropertiesProvider();
-		dialectProvider.setDialectForUnitTest(new SQLServer2005Dialect());
+		dialectProvider.setDialectForUnitTest(new SQLServer2008Dialect());
 		SearchQueryBuilder builder = new SearchQueryBuilder(myFhirContext, myModelConfig, myPartitionSettings, myRequestPartitionId, "Patient", mySqlBuilderFactory, dialectProvider, false);
 		builder.addResourceIdsPredicate(Lists.newArrayList(500L, 501L));
 		builder.addSortDate(builder.getOrCreateResourceTablePredicateBuilder().getColumnLastUpdated(), true);
@@ -167,7 +167,7 @@ public class SearchQueryBuilderTest {
 	public void testRangePostgreSQL95_NoSort() {
 
 		HibernatePropertiesProvider dialectProvider = new HibernatePropertiesProvider();
-		dialectProvider.setDialectForUnitTest(new PostgreSQL95Dialect());
+		dialectProvider.setDialectForUnitTest(new PostgreSQLDialect());
 		SearchQueryBuilder builder = new SearchQueryBuilder(myFhirContext, myModelConfig, myPartitionSettings, myRequestPartitionId, "Patient", mySqlBuilderFactory, dialectProvider, false);
 		builder.addResourceIdsPredicate(Lists.newArrayList(500L, 501L));
 		GeneratedSql generated;
@@ -193,7 +193,7 @@ public class SearchQueryBuilderTest {
 	public void testRangePostgreSQL95_WithSort() {
 
 		HibernatePropertiesProvider dialectProvider = new HibernatePropertiesProvider();
-		dialectProvider.setDialectForUnitTest(new PostgreSQL95Dialect());
+		dialectProvider.setDialectForUnitTest(new PostgreSQLDialect());
 		SearchQueryBuilder builder = new SearchQueryBuilder(myFhirContext, myModelConfig, myPartitionSettings, myRequestPartitionId, "Patient", mySqlBuilderFactory, dialectProvider, false);
 		builder.addResourceIdsPredicate(Lists.newArrayList(500L, 501L));
 		builder.addSortDate(builder.getOrCreateResourceTablePredicateBuilder().getColumnLastUpdated(), true);
@@ -387,7 +387,7 @@ public class SearchQueryBuilderTest {
 	public void testRangeDerbyTenSeven_NoSort() {
 
 		HibernatePropertiesProvider dialectProvider = new HibernatePropertiesProvider();
-		dialectProvider.setDialectForUnitTest(new DerbyTenSevenDialect());
+		dialectProvider.setDialectForUnitTest(new DerbyDialect());
 		SearchQueryBuilder builder = new SearchQueryBuilder(myFhirContext, myModelConfig, myPartitionSettings, myRequestPartitionId, "Patient", mySqlBuilderFactory, dialectProvider, false);
 		builder.addResourceIdsPredicate(Lists.newArrayList(500L, 501L));
 		GeneratedSql generated;
@@ -413,7 +413,7 @@ public class SearchQueryBuilderTest {
 	public void testRangeDerbyTenSeven_WithSort() {
 
 		HibernatePropertiesProvider dialectProvider = new HibernatePropertiesProvider();
-		dialectProvider.setDialectForUnitTest(new DerbyTenSevenDialect());
+		dialectProvider.setDialectForUnitTest(new DerbyDialect());
 		SearchQueryBuilder builder = new SearchQueryBuilder(myFhirContext, myModelConfig, myPartitionSettings, myRequestPartitionId, "Patient", mySqlBuilderFactory, dialectProvider, false);
 		builder.addResourceIdsPredicate(Lists.newArrayList(500L, 501L));
 		builder.addSortDate(builder.getOrCreateResourceTablePredicateBuilder().getColumnLastUpdated(), true);

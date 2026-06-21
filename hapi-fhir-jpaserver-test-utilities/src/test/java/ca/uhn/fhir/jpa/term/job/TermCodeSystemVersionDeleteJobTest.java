@@ -129,7 +129,7 @@ public class TermCodeSystemVersionDeleteJobTest extends BaseJpaR4Test {
 
 
 		JobParameters jobParameters = new JobParameters(Collections.singletonMap(
-			JOB_PARAM_CODE_SYSTEM_VERSION_ID, new JobParameter(termCodeSystemVersionPidVect[0], true) ));
+			JOB_PARAM_CODE_SYSTEM_VERSION_ID, new JobParameter<>(termCodeSystemVersionPidVect[0], Long.class, true) ));
 
 
 		JobExecution jobExecution = myJobSubmitter.runJob(myTermCodeSystemVersionDeleteJob, jobParameters);
@@ -163,7 +163,7 @@ public class TermCodeSystemVersionDeleteJobTest extends BaseJpaR4Test {
 	public void runWithNullParameterFailsValidation() {
 		JobParameters jobParameters = new JobParameters(
 			Collections.singletonMap(
-				JOB_PARAM_CODE_SYSTEM_VERSION_ID, new JobParameter((Long) null, true) ));
+				JOB_PARAM_CODE_SYSTEM_VERSION_ID, new JobParameter<>((Long) null, Long.class, true) ));
 
 		JobParametersInvalidException thrown = Assertions.assertThrows(
 			JobParametersInvalidException.class,
@@ -177,7 +177,7 @@ public class TermCodeSystemVersionDeleteJobTest extends BaseJpaR4Test {
 	public void runWithParameterZeroFailsValidation() {
 		JobParameters jobParameters = new JobParameters(
 			Collections.singletonMap(
-				JOB_PARAM_CODE_SYSTEM_VERSION_ID, new JobParameter(0L, true) ));
+				JOB_PARAM_CODE_SYSTEM_VERSION_ID, new JobParameter<>(0L, Long.class, true) ));
 
 		JobParametersInvalidException thrown = Assertions.assertThrows(
 			JobParametersInvalidException.class,

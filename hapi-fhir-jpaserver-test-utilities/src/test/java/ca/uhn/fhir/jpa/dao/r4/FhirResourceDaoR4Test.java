@@ -55,6 +55,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.StringContains;
+import org.hibernate.Session;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.hl7.fhir.instance.model.api.IAnyResource;
@@ -351,7 +352,7 @@ public class FhirResourceDaoR4Test extends BaseJpaR4Test {
 		runInTransaction(() -> {
 			assertEquals(3L, myTermConceptDao.count());
 
-			SearchSession session = Search.session(myEntityManager);
+			SearchSession session = Search.session(myEntityManager.unwrap(Session.class));
 			List<TermConcept> termConcepts = session.search(TermConcept.class).where(f -> f.matchAll()).fetchAllHits();
 			assertEquals(3, termConcepts.size());
 		});
@@ -364,7 +365,7 @@ public class FhirResourceDaoR4Test extends BaseJpaR4Test {
 		runInTransaction(() -> {
 			assertEquals(3L, myTermConceptDao.count());
 
-			SearchSession session = Search.session(myEntityManager);
+			SearchSession session = Search.session(myEntityManager.unwrap(Session.class));
 			List<TermConcept> termConcepts = session.search(TermConcept.class).where(f -> f.matchAll()).fetchAllHits();
 			assertEquals(3, termConcepts.size());
 		});
