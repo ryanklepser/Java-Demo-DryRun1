@@ -20,6 +20,7 @@ import ca.uhn.fhir.test.utilities.docker.RequiresDocker;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.hibernate.Session;
 import org.hibernate.search.mapper.orm.Search;
 import org.hl7.fhir.instance.model.api.IBaseCoding;
 import org.hl7.fhir.instance.model.api.IIdType;
@@ -35,8 +36,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Nonnull;
-import javax.persistence.EntityManager;
+import jakarta.annotation.Nonnull;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Objects;
 
@@ -186,7 +187,7 @@ public class TokenAutocompleteElasticsearchIT extends BaseJpaTest {
 
 	List<TokenAutocompleteHit> autocompleteSearch(String theResourceType, String theSPName, String theModifier, String theSearchText) {
 		return new TransactionTemplate(myTxManager).execute(s -> {
-			TokenAutocompleteSearch tokenAutocompleteSearch = new TokenAutocompleteSearch(myFhirCtx, myModelConfig, Search.session(myEntityManager));
+			TokenAutocompleteSearch tokenAutocompleteSearch = new TokenAutocompleteSearch(myFhirCtx, myModelConfig, Search.session(myEntityManager.unwrap(Session.class)));
 			return  tokenAutocompleteSearch.search(theResourceType, theSPName, theSearchText, theModifier,30);
 		});
 	}

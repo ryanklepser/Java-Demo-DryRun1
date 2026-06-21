@@ -11,13 +11,13 @@ import com.healthmarketscience.sqlbuilder.Condition;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.PostgreSQL10Dialect;
-import org.hibernate.dialect.PostgreSQL95Dialect;
+import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.dialect.SQLServer2012Dialect;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

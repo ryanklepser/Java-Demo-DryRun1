@@ -24,6 +24,7 @@ import org.hibernate.search.engine.search.predicate.dsl.MatchPredicateOptionsSte
 import org.hibernate.search.engine.search.predicate.dsl.PredicateFinalStep;
 import org.hibernate.search.engine.search.predicate.dsl.SearchPredicateFactory;
 import org.hibernate.search.engine.search.query.SearchResult;
+import org.hibernate.Session;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.hl7.fhir.instance.model.api.IIdType;
@@ -42,7 +43,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
 
@@ -126,7 +127,7 @@ public class HibernateSearchSandboxTest extends BaseJpaTest {
 			IIdType id1 = myObservationDao.create(obs1, mySrd).getId().toUnqualifiedVersionless();
 
 			runInTransaction(() -> {
-				SearchSession searchSession = Search.session(myEntityManager);
+				SearchSession searchSession = Search.session(myEntityManager.unwrap(Session.class));
 				SearchResult<ResourceTable> result = searchSession.search(ResourceTable.class)
 					.where(f -> f.bool(b -> {
 						b.must(f.match().field("myResourceType").matching("Observation"));
@@ -158,7 +159,7 @@ public class HibernateSearchSandboxTest extends BaseJpaTest {
 			IIdType id1 = myObservationDao.create(obs1, mySrd).getId().toUnqualifiedVersionless();
 
 			runInTransaction(() -> {
-				SearchSession searchSession = Search.session(myEntityManager);
+				SearchSession searchSession = Search.session(myEntityManager.unwrap(Session.class));
 				SearchResult<ResourceTable> result = searchSession.search(ResourceTable.class)
 					.where(f -> f.bool(b -> {
 						b.must(f.match().field("myResourceType").matching("Observation"));
@@ -201,7 +202,7 @@ public class HibernateSearchSandboxTest extends BaseJpaTest {
 			));
 
 			runInTransaction(() -> {
-				SearchSession searchSession = Search.session(myEntityManager);
+				SearchSession searchSession = Search.session(myEntityManager.unwrap(Session.class));
 				SearchResult<ResourceTable> result = searchSession.search(ResourceTable.class)
 					.where(f -> f.bool(b -> {
 						b.must(f.match().field("myResourceType").matching("Observation"));
@@ -233,7 +234,7 @@ public class HibernateSearchSandboxTest extends BaseJpaTest {
 			));
 
 			runInTransaction(() -> {
-				SearchSession searchSession = Search.session(myEntityManager);
+				SearchSession searchSession = Search.session(myEntityManager.unwrap(Session.class));
 				SearchResult<ResourceTable> result = searchSession.search(ResourceTable.class)
 					.where(f -> f.bool(b -> {
 						b.must(f.match().field("myResourceType").matching("Observation"));
@@ -261,7 +262,7 @@ public class HibernateSearchSandboxTest extends BaseJpaTest {
 //			List<ResourceTable> hits = result.hits();
 			});
 //			runInTransaction(() -> {
-//				SearchSession searchSession = Search.session(myEntityManager);
+//				SearchSession searchSession = Search.session(myEntityManager.unwrap(Session.class));
 //				SearchResult<ResourceTable> result = searchSession.search(ResourceTable.class)
 //					.where(f -> f.bool(b -> {
 //						b.must(f.match().field("myResourceType").matching("Observation"));
@@ -325,7 +326,7 @@ public class HibernateSearchSandboxTest extends BaseJpaTest {
 			));
 
 			runInTransaction(() -> {
-				SearchSession searchSession = Search.session(myEntityManager);
+				SearchSession searchSession = Search.session(myEntityManager.unwrap(Session.class));
 				SearchResult<ResourceTable> result = searchSession.search(ResourceTable.class)
 					.where(f -> {
 						TestPredBuilder builder = new TestPredBuilder(f);
@@ -366,7 +367,7 @@ public class HibernateSearchSandboxTest extends BaseJpaTest {
 			));
 
 			runInTransaction(() -> {
-				SearchSession searchSession = Search.session(myEntityManager);
+				SearchSession searchSession = Search.session(myEntityManager.unwrap(Session.class));
 				SearchResult<ResourceTable> result = searchSession.search(ResourceTable.class)
 					.where(f -> {
 						TestPredBuilder builder = new TestPredBuilder(f);

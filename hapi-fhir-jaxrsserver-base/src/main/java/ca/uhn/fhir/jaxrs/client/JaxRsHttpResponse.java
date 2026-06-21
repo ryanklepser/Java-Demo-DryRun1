@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import ca.uhn.fhir.rest.client.impl.BaseHttpResponse;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
@@ -38,7 +38,7 @@ import ca.uhn.fhir.rest.client.api.IHttpResponse;
 import org.apache.commons.io.IOUtils;
 
 /**
- * A Http Response based on JaxRs. This is an adapter around the class {@link javax.ws.rs.core.Response Response}
+ * A Http Response based on JaxRs. This is an adapter around the class {@link jakarta.ws.rs.core.Response Response}
  * @author Peter Van Houte | peter.vanhoute@agfa.com | Agfa Healthcare
  */
 public class JaxRsHttpResponse extends BaseHttpResponse implements IHttpResponse {

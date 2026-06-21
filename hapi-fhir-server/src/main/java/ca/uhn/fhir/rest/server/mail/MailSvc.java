@@ -24,16 +24,16 @@ import org.apache.commons.lang3.Validate;
 import org.simplejavamail.MailException;
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.api.email.Recipient;
-import org.simplejavamail.api.mailer.AsyncResponse;
-import org.simplejavamail.api.mailer.AsyncResponse.ExceptionConsumer;
 import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;
 import org.simplejavamail.mailer.MailerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class MailSvc implements IMailSvc {
@@ -62,21 +62,24 @@ public class MailSvc implements IMailSvc {
 	@Override
 	public void sendMail(@Nonnull Email theEmail,
 								@Nonnull Runnable theOnSuccess,
-								@Nonnull ExceptionConsumer theErrorHandler) {
+								@Nonnull Consumer<Exception> theErrorHandler) {
 		send(theEmail, theOnSuccess, theErrorHandler);
 	}
 
 	private void send(@Nonnull Email theEmail,
 							@Nonnull Runnable theOnSuccess,
-							@Nonnull ExceptionConsumer theErrorHandler) {
+							@Nonnull Consumer<Exception> theErrorHandler) {
 		Validate.notNull(theEmail);
 		Validate.notNull(theOnSuccess);
 		Validate.notNull(theErrorHandler);
 		try {
-			final AsyncResponse asyncResponse = myMailer.sendMail(theEmail, true);
-			if (asyncResponse != null) {
-				asyncResponse.onSuccess(theOnSuccess);
-				asyncResponse.onException(theErrorHandler);
+			final CompletableFuture<Void> future = myMailer.sendMail(theEmail, true);
+			if (future != null) {
+				future.thenRun(theOnSuccess);
+				future.exceptionally(t -> {
+					theErrorHandler.accept(t instanceof Exception ? (Exception) t : new RuntimeException(t));
+					return null;
+				});
 			}
 		} catch (MailException e) {
 			theErrorHandler.accept(e);
@@ -117,7 +120,7 @@ public class MailSvc implements IMailSvc {
 		}
 	}
 
-	private class ErrorHandler implements ExceptionConsumer {
+	private class ErrorHandler implements Consumer<Exception> {
 		private final Email myEmail;
 
 		private ErrorHandler(@Nonnull Email theEmail) {

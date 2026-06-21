@@ -8,9 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.annotation.Nonnull;
-import java.util.Locale;
-
+import jakarta.annotation.Nonnull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,7 +38,7 @@ public class SearchQueryBuilderDialectSqlServerTest extends BaseSearchQueryBuild
 		logSql(generatedSql);
 
 		String sql = generatedSql.getSql();
-		assertTrue(sql.endsWith("select page0_ from query where __row__ >= ? and __row__ < ?"), sql);
+		assertTrue(sql.endsWith("offset ? rows fetch next ? rows only"), sql);
 
 		assertEquals(3, StringUtils.countMatches(sql, "?"));
 		assertEquals(3, generatedSql.getBindVariables().size());
@@ -55,7 +53,7 @@ public class SearchQueryBuilderDialectSqlServerTest extends BaseSearchQueryBuild
 		logSql(generatedSql);
 
 		String sql = generatedSql.getSql();
-		assertTrue(sql.toUpperCase(Locale.ROOT).contains("SELECT TOP(?) T0.RES_ID FROM"), sql);
+		assertTrue(sql.endsWith("offset 0 rows fetch next ? rows only"), sql);
 
 		assertEquals(2, StringUtils.countMatches(sql, "?"));
 		assertEquals(2, generatedSql.getBindVariables().size());

@@ -20,20 +20,23 @@ package ca.uhn.fhir.jpa.batch.config;
  * #L%
  */
 
-import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.explore.support.MapJobExplorerFactoryBean;
+import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.launch.support.SimpleJobLauncher;
+import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
+import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.sql.DataSource;
 
-public class NonPersistedBatchConfigurer extends DefaultBatchConfigurer {
+
+public class NonPersistedBatchConfigurer {
 	@Autowired
 	@Qualifier("hapiTransactionManager")
 	private PlatformTransactionManager myHapiPlatformTransactionManager;
@@ -42,33 +45,65 @@ public class NonPersistedBatchConfigurer extends DefaultBatchConfigurer {
 	@Qualifier(BatchConstants.JOB_LAUNCHING_TASK_EXECUTOR)
 	private TaskExecutor myTaskExecutor;
 
-	private MapJobRepositoryFactoryBean myJobRepositoryFactory;
+	@Autowired(required = false)
+	private DataSource myDataSource;
 
-	@Override
+	private JobRepository myJobRepository;
+	private JobExplorer myJobExplorer;
+	private JobLauncher myJobLauncher;
+
 	public PlatformTransactionManager getTransactionManager() {
 		return myHapiPlatformTransactionManager;
 	}
 
+	public JobRepository getJobRepository() throws Exception {
+		if (myJobRepository == null) {
+			myJobRepository = createJobRepository();
+		}
+		return myJobRepository;
+	}
 
-	@Override
 	protected JobRepository createJobRepository() throws Exception {
-		MapJobRepositoryFactoryBean factory = new MapJobRepositoryFactoryBean();
-		factory.setTransactionManager(this.getTransactionManager());
+		JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
+		factory.setTransactionManager(getTransactionManager());
+		factory.setDataSource(getOrCreateDataSource());
 		factory.afterPropertiesSet();
-		myJobRepositoryFactory = factory;
 		return factory.getObject();
 	}
 
-	@Override
+	private DataSource getOrCreateDataSource() {
+		if (myDataSource == null) {
+			myDataSource = new EmbeddedDatabaseBuilder()
+				.setType(EmbeddedDatabaseType.H2)
+				.build();
+		}
+		return myDataSource;
+	}
+
+	public JobExplorer getJobExplorer() throws Exception {
+		if (myJobExplorer == null) {
+			myJobExplorer = createJobExplorer();
+		}
+		return myJobExplorer;
+	}
+
 	public JobExplorer createJobExplorer() throws Exception {
-		MapJobExplorerFactoryBean jobExplorerFactoryBean = new MapJobExplorerFactoryBean(myJobRepositoryFactory);
+		JobExplorerFactoryBean jobExplorerFactoryBean = new JobExplorerFactoryBean();
+		jobExplorerFactoryBean.setDataSource(getOrCreateDataSource());
+		jobExplorerFactoryBean.setTransactionManager(getTransactionManager());
 		jobExplorerFactoryBean.afterPropertiesSet();
 		return jobExplorerFactoryBean.getObject();
 	}
 
-	@Override
+	public JobLauncher getJobLauncher() throws Exception {
+		if (myJobLauncher == null) {
+			myJobLauncher = createJobLauncher();
+		}
+		return myJobLauncher;
+	}
+
 	protected JobLauncher createJobLauncher() throws Exception {
-		SimpleJobLauncher launcher = new SimpleJobLauncher();
+		TaskExecutorJobLauncher launcher = new TaskExecutorJobLauncher();
 		launcher.setTaskExecutor(myTaskExecutor);
 		launcher.setJobRepository(getJobRepository());
 		launcher.afterPropertiesSet();

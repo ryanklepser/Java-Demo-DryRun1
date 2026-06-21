@@ -65,13 +65,11 @@ import com.healthmarketscience.sqlbuilder.dbspec.basic.DbTable;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.SQLServerDialect;
-import org.hibernate.dialect.pagination.AbstractLimitHandler;
-import org.hibernate.engine.spi.RowSelection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -395,76 +393,30 @@ public class SearchQueryBuilder {
 		if (maxResultsToFetch != null || offset != null) {
 
 			maxResultsToFetch = defaultIfNull(maxResultsToFetch, 10000);
-			
-			AbstractLimitHandler limitHandler = (AbstractLimitHandler) myDialect.getLimitHandler();
-			RowSelection selection = new RowSelection();
-			selection.setFirstRow(offset);
-			selection.setMaxRows(maxResultsToFetch);
-			sql = limitHandler.processSql(sql, selection);
-
-			int startOfQueryParameterIndex = 0;
 
 			boolean isSqlServer = (myDialect instanceof SQLServerDialect);
 			if (isSqlServer) {
-
-				// The SQLServerDialect has a bunch of one-off processing to deal with rules on when
-				// a limit can be used, so we can't rely on the flags that the limithandler exposes since
-				// the exact structure of the query depends on the parameters
-				if (sql.contains("top(?)")) {
-					bindVariables.add(0, maxResultsToFetch);
-				}
-				if (sql.contains("offset 0 rows fetch next ? rows only")) {
+				if (offset != null) {
+					sql = sql + " offset ? rows fetch next ? rows only";
+					bindVariables.add(offset);
 					bindVariables.add(maxResultsToFetch);
-				}
-				if (sql.contains("offset ? rows fetch next ? rows only")) {
-					bindVariables.add(theOffset);
-					bindVariables.add(maxResultsToFetch);
-				}
-				if (offset != null && sql.contains("__row__")) {
-					bindVariables.add(theOffset + 1);
-					bindVariables.add(theOffset + maxResultsToFetch + 1);
-				}
-
-			} else if (limitHandler.supportsVariableLimit()) {
-
-				boolean bindLimitParametersFirst = limitHandler.bindLimitParametersFirst();
-				if (limitHandler.useMaxForLimit() && offset != null) {
-					maxResultsToFetch = maxResultsToFetch + offset;
-				}
-
-				if (limitHandler.bindLimitParametersInReverseOrder()) {
-					startOfQueryParameterIndex = bindCountParameter(bindVariables, maxResultsToFetch, limitHandler, startOfQueryParameterIndex, bindLimitParametersFirst);
-					bindOffsetParameter(bindVariables, offset, limitHandler, startOfQueryParameterIndex, bindLimitParametersFirst);
 				} else {
-					startOfQueryParameterIndex = bindOffsetParameter(bindVariables, offset, limitHandler, startOfQueryParameterIndex, bindLimitParametersFirst);
-					bindCountParameter(bindVariables, maxResultsToFetch, limitHandler, startOfQueryParameterIndex, bindLimitParametersFirst);
+					sql = sql + " offset 0 rows fetch next ? rows only";
+					bindVariables.add(maxResultsToFetch);
+				}
+			} else {
+				if (offset != null) {
+					sql = sql + " limit ? offset ?";
+					bindVariables.add(maxResultsToFetch);
+					bindVariables.add(offset);
+				} else {
+					sql = sql + " limit ?";
+					bindVariables.add(maxResultsToFetch);
 				}
 			}
 		}
 
 		return new GeneratedSql(myMatchNothing, sql, bindVariables);
-	}
-
-	private int bindCountParameter(List<Object> bindVariables, Integer maxResultsToFetch, AbstractLimitHandler limitHandler, int startOfQueryParameterIndex, boolean bindLimitParametersFirst) {
-		if (limitHandler.supportsLimit()) {
-			if (bindLimitParametersFirst) {
-				bindVariables.add(startOfQueryParameterIndex++, maxResultsToFetch);
-			} else {
-				bindVariables.add(maxResultsToFetch);
-			}
-		}
-		return startOfQueryParameterIndex;
-	}
-
-	public int bindOffsetParameter(List<Object> theBindVariables, @Nullable Integer theOffset, AbstractLimitHandler theLimitHandler, int theStartOfQueryParameterIndex, boolean theBindLimitParametersFirst) {
-		if (theLimitHandler.supportsLimitOffset() && theOffset != null) {
-			if (theBindLimitParametersFirst) {
-				theBindVariables.add(theStartOfQueryParameterIndex++, theOffset);
-			} else {
-				theBindVariables.add(theOffset);
-			}
-		}
-		return theStartOfQueryParameterIndex;
 	}
 
 	/**

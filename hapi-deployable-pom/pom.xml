@@ -47,12 +47,12 @@
 					<resultFile>${project.build.directory}/duplicate-finder-result.xml</resultFile>
 					<ignoredDependencies>
 						<dependency>
-							<groupId>javax.el</groupId>
-							<artifactId>javax.el-api</artifactId>
+							<groupId>jakarta.el</groupId>
+							<artifactId>jakarta.el-api</artifactId>
 						</dependency>
 						<dependency>
-							<groupId>javax.mail</groupId>
-							<artifactId>javax.mail-api</artifactId>
+							<groupId>jakarta.mail</groupId>
+							<artifactId>jakarta.mail-api</artifactId>
 						</dependency>
 						<dependency>
 							<groupId>commons-logging</groupId>
@@ -73,6 +73,10 @@
 						<dependency>
 							<groupId>com.google.code.findbugs</groupId>
 							<artifactId>annotations</artifactId>
+						</dependency>
+						<dependency>
+							<groupId>com.github.bbottema</groupId>
+							<artifactId>jetbrains-runtime-annotations</artifactId>
 						</dependency>
 						<dependency>
 							<groupId>org.apache.derby</groupId>
@@ -99,12 +103,52 @@
 							<artifactId>byte-buddy</artifactId>
 						</dependency>
 						<dependency>
-							<groupId>javax.xml.bind</groupId>
-							<artifactId>jaxb-api</artifactId>
+							<groupId>jakarta.xml.bind</groupId>
+							<artifactId>jakarta.xml.bind-api</artifactId>
 						</dependency>
 						<dependency>
 							<groupId>com.sun.xml.bind</groupId>
 							<artifactId>jaxb-impl</artifactId>
+						</dependency>
+						<dependency>
+							<groupId>com.sun.activation</groupId>
+							<artifactId>jakarta.activation</artifactId>
+						</dependency>
+						<dependency>
+							<groupId>org.hibernate</groupId>
+							<artifactId>hibernate-core</artifactId>
+						</dependency>
+						<dependency>
+							<groupId>org.eclipse.jetty.websocket</groupId>
+							<artifactId>websocket-api</artifactId>
+						</dependency>
+						<dependency>
+							<groupId>org.eclipse.jetty.websocket</groupId>
+							<artifactId>websocket-jetty-api</artifactId>
+						</dependency>
+						<dependency>
+							<groupId>org.eclipse.jetty.websocket</groupId>
+							<artifactId>websocket-client</artifactId>
+						</dependency>
+						<dependency>
+							<groupId>org.eclipse.jetty.websocket</groupId>
+							<artifactId>websocket-jetty-client</artifactId>
+						</dependency>
+						<dependency>
+							<groupId>org.eclipse.jetty.websocket</groupId>
+							<artifactId>websocket-common</artifactId>
+						</dependency>
+						<dependency>
+							<groupId>org.eclipse.jetty.websocket</groupId>
+							<artifactId>websocket-jetty-common</artifactId>
+						</dependency>
+						<dependency>
+							<groupId>jakarta.servlet</groupId>
+							<artifactId>jakarta.servlet-api</artifactId>
+						</dependency>
+						<dependency>
+							<groupId>org.eclipse.jetty.toolchain</groupId>
+							<artifactId>jetty-jakarta-servlet-api</artifactId>
 						</dependency>
 					</ignoredDependencies>
 					<ignoredResourcePatterns>

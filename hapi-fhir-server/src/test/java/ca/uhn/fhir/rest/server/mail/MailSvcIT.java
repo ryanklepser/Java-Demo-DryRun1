@@ -10,8 +10,8 @@ import org.simplejavamail.MailException;
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.email.EmailBuilder;
 
-import javax.annotation.Nonnull;
-import javax.mail.internet.MimeMessage;
+import jakarta.annotation.Nonnull;
+import jakarta.mail.internet.MimeMessage;
 import java.util.Arrays;
 import java.util.List;
 

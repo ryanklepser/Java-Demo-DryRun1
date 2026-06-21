@@ -23,13 +23,13 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import ca.uhn.fhir.interceptor.api.IInterceptorService;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import org.apache.commons.lang3.StringUtils;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -105,7 +105,7 @@ public abstract class AbstractJaxRsProvider implements IRestfulServerDefaults {
 	/**
 	 * This method returns the server base, independent of the request or resource.
 	 * 
-	 * @see javax.ws.rs.core.UriInfo#getBaseUri()
+	 * @see jakarta.ws.rs.core.UriInfo#getBaseUri()
 	 * @return the ascii string for the server base
 	 */
 	public String getBaseForServer() {

@@ -46,8 +46,8 @@ import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -366,9 +366,9 @@ public class TermDeferredStorageSvcImpl implements ITermDeferredStorageSvc {
 
 
 	private void deleteTermCodeSystemVersionOffline(Long theCodeSystemVersionPid) {
-		JobParameters jobParameters = new JobParameters(
-			Collections.singletonMap(
-				JOB_PARAM_CODE_SYSTEM_VERSION_ID, new JobParameter(theCodeSystemVersionPid, true)));
+		JobParameters jobParameters = new JobParametersBuilder()
+			.addLong(JOB_PARAM_CODE_SYSTEM_VERSION_ID, theCodeSystemVersionPid)
+			.toJobParameters();
 
 		try {
 
@@ -383,9 +383,9 @@ public class TermDeferredStorageSvcImpl implements ITermDeferredStorageSvc {
 
 
 	private void deleteTermCodeSystemOffline(Long theCodeSystemPid) {
-		JobParameters jobParameters = new JobParameters(
-			Collections.singletonMap(
-				JOB_PARAM_CODE_SYSTEM_ID, new JobParameter(theCodeSystemPid, true)));
+		JobParameters jobParameters = new JobParametersBuilder()
+			.addLong(JOB_PARAM_CODE_SYSTEM_ID, theCodeSystemPid)
+			.toJobParameters();
 
 		try {
 
